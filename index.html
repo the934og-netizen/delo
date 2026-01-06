@@ -43,13 +43,12 @@
             <h1 class="text-2xl font-bold text-gray-800 mb-2">2. Виды работ</h1>
             <p class="text-gray-400 text-sm mb-6">Добавьте услуги и цены</p>
             
-            <div id="services-list" class="space-y-2 mb-6 max-h-60 overflow-y-auto">
-                </div>
+            <div id="services-list" class="space-y-2 mb-6 max-h-60 overflow-y-auto"></div>
 
             <div class="bg-blue-50 p-4 rounded-2xl space-y-3 border border-blue-100">
                 <input type="text" id="new-service-name" placeholder="Наименование работ, услуг" class="w-full p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
                 <div class="flex space-x-2">
-                    <input type="text" id="new-service-unit" placeholder="Ед. изм. (шт, м2)" class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
+                    <input type="text" id="new-service-unit" placeholder="Ед. изм." class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
                     <input type="number" id="new-service-price" placeholder="Цена за ед." class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
                 </div>
                 <button onclick="addService()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-xl">+</button>
@@ -71,19 +70,22 @@
                     <img id="final-photo" class="hidden w-full h-full object-cover rounded-full" src="">
                     <div id="final-photo-placeholder" class="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-gray-400 font-bold uppercase">ФОТО</div>
                 </div>
-                <h1 id="display-name" class="mt-4 text-2xl font-black text-gray-800"></h1>
-                <p id="display-spec" class="text-blue-600 font-bold uppercase text-sm mt-1"></p>
+                <h1 id="display-name" class="mt-4 text-2xl font-black text-gray-800 tracking-tight"></h1>
+                <p id="display-spec" class="text-blue-600 font-bold uppercase text-sm mt-1 tracking-widest"></p>
                 <p id="display-location" class="text-gray-400 text-sm mt-2 font-medium">📍 <span id="loc-text"></span></p>
-                <button onclick="alert('Режим Заказчика пока в разработке')" class="mt-10 w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-2xl uppercase tracking-widest text-sm">Заказать расчет сметы</button>
+                <button onclick="alert('Режим Заказчика в разработке')" class="mt-10 w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-2xl uppercase tracking-widest text-sm">Заказать расчет сметы</button>
             </div>
         </div>
     </div>
 
     <script>
         const geoData = { "KZ": ["Астана", "Алматы", "Павлодар", "Шымкент"], "RU": ["Москва", "СПБ"] };
-        // Инициализируем профиль с пустым массивом услуг, если данных еще нет
         let masterProfile = JSON.parse(localStorage.getItem('masterProfile')) || { services: [] };
-        if (!masterProfile.services) masterProfile.services = [];
+
+        // Функция красивого разделения чисел (150000 -> 150 000)
+        function formatNum(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
 
         function updateRegions() {
             const country = document.getElementById('master-country').value;
@@ -112,8 +114,11 @@
         function goToPriceStep() {
             masterProfile.name = document.getElementById('master-name').value;
             masterProfile.city = document.getElementById('master-city').value;
-            masterProfile.spec = document.getElementById('master-spec').options[document.getElementById('master-spec').selectedIndex].text;
-            if(!masterProfile.name || !masterProfile.city) return alert("Заполните имя и город!");
+            const specElem = document.getElementById('master-spec');
+            masterProfile.spec = specElem.options[specElem.selectedIndex].text;
+            
+            if(!masterProfile.name || masterProfile.city === "") return alert("Заполните имя и город!");
+            
             renderServices();
             showScreen('screen-price-setup');
         }
@@ -124,27 +129,27 @@
             const price = document.getElementById('new-service-price').value;
             
             if(name && unit && price) {
-                masterProfile.services.push({ name, unit, price });
+                masterProfile.services.push({ name, unit, price: parseInt(price) });
                 renderServices();
-                // Очистка полей
                 document.getElementById('new-service-name').value = '';
                 document.getElementById('new-service-unit').value = '';
                 document.getElementById('new-service-price').value = '';
             } else {
-                alert("Заполните все три поля услуги!");
+                alert("Заполните все поля услуги!");
             }
         }
 
         function renderServices() {
             const container = document.getElementById('services-list');
+            if (!masterProfile.services) masterProfile.services = [];
             container.innerHTML = masterProfile.services.map((s, i) => `
-                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs">
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs">
                     <div class="flex-1">
                         <div class="font-bold text-gray-800">${s.name}</div>
                         <div class="text-gray-400">${s.unit}</div>
                     </div>
-                    <div class="font-black text-blue-600">${s.price} ₸</div>
-                    <button onclick="removeService(${i})" class="ml-3 text-red-400 font-bold">✕</button>
+                    <div class="font-black text-blue-600">${formatNum(s.price)} ₸</div>
+                    <button onclick="removeService(${i})" class="ml-3 text-red-400 text-lg">✕</button>
                 </div>
             `).join('');
         }
@@ -162,13 +167,14 @@
         function loadProfile() {
             const data = localStorage.getItem('masterProfile');
             if (data) {
-                const p = JSON.parse(data);
-                document.getElementById('display-name').innerText = p.name || "Без имени";
-                document.getElementById('display-spec').innerText = p.spec || "Специализация";
-                document.getElementById('loc-text').innerText = p.city || "Город";
-                if(p.photo) {
-                    document.getElementById('final-photo').src = p.photo;
-                    document.getElementById('final-photo').classList.remove('hidden');
+                masterProfile = JSON.parse(data);
+                document.getElementById('display-name').innerText = masterProfile.name || "";
+                document.getElementById('display-spec').innerText = masterProfile.spec || "";
+                document.getElementById('loc-text').innerText = masterProfile.city || "";
+                if(masterProfile.photo) {
+                    const img = document.getElementById('final-photo');
+                    img.src = masterProfile.photo;
+                    img.classList.remove('hidden');
                     document.getElementById('final-photo-placeholder').classList.add('hidden');
                 }
                 showScreen('screen-vizitka');
@@ -178,7 +184,9 @@
         }
 
         function showScreen(id) {
-            document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-price-setup').classList.add('hidden');
+            document.getElementById('screen-vizitka').classList.add('hidden');
             document.getElementById(id).classList.remove('hidden');
         }
 
