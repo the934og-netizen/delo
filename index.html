@@ -21,6 +21,8 @@
                     <button onclick="document.getElementById('master-photo').click()" class="text-blue-600 text-sm font-bold underline">Загрузить лого или фото</button>
                 </div>
                 <input type="text" id="master-name" placeholder="Имя Фамилия / Название ТОО" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
+                <input type="tel" id="master-phone" placeholder="Номер телефона (77071234567)" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
+                
                 <select id="master-country" onchange="updateRegions()" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
                     <option value="">Выберите страну</option>
                     <option value="KZ">Казахстан</option>
@@ -34,31 +36,29 @@
                     <option value="mebel">Ремонт мебели</option>
                     <option value="electro">Электрика</option>
                     <option value="stroy">Строительство</option>
+                    <option value="finishing">Отделочные работы</option>
                 </select>
-                <button onclick="goToPriceStep()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg">ДАЛЕЕ: НАСТРОИТЬ ПРАЙС</button>
+                <button onclick="goToPriceStep()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg transition active:scale-95">ДАЛЕЕ: НАСТРОИТЬ ПРАЙС</button>
             </div>
         </div>
 
         <div id="screen-price-setup" class="hidden bg-white rounded-3xl shadow-xl p-6">
             <h1 class="text-2xl font-bold text-gray-800 mb-2">2. Виды работ</h1>
             <p class="text-gray-400 text-sm mb-6">Добавьте услуги и цены</p>
-            
             <div id="services-list" class="space-y-2 mb-6 max-h-60 overflow-y-auto"></div>
-
             <div class="bg-blue-50 p-4 rounded-2xl space-y-3 border border-blue-100">
                 <input type="text" id="new-service-name" placeholder="Наименование работ, услуг" class="w-full p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
                 <div class="flex space-x-2">
                     <input type="text" id="new-service-unit" placeholder="Ед. изм." class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
                     <input type="number" id="new-service-price" placeholder="Цена за ед." class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
                 </div>
-                <button onclick="addService()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-xl">+</button>
+                <button onclick="addService()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-xl transition active:scale-95">+</button>
             </div>
-
-            <button onclick="saveAndFinish()" class="w-full mt-8 bg-green-500 text-white font-bold py-4 rounded-2xl shadow-lg">ГОТОВО: СОЗДАТЬ ВИЗИТКУ</button>
+            <button onclick="saveAndFinish()" class="w-full mt-8 bg-green-500 text-white font-bold py-4 rounded-2xl shadow-lg transition active:scale-95">ГОТОВО: СОЗДАТЬ ВИЗИТКУ</button>
         </div>
 
         <div id="screen-vizitka" class="hidden bg-white rounded-3xl shadow-2xl overflow-hidden relative">
-            <button onclick="showScreen('screen-setup')" class="absolute top-6 right-6 z-10 bg-white/20 p-3 rounded-full backdrop-blur-md">
+            <button onclick="showScreen('screen-setup')" class="absolute top-6 right-6 z-10 bg-white/20 p-3 rounded-full backdrop-blur-md transition hover:bg-white/40">
                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -70,10 +70,18 @@
                     <img id="final-photo" class="hidden w-full h-full object-cover rounded-full" src="">
                     <div id="final-photo-placeholder" class="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-gray-400 font-bold uppercase">ФОТО</div>
                 </div>
-                <h1 id="display-name" class="mt-4 text-2xl font-black text-gray-800 tracking-tight"></h1>
+                <h1 id="display-name" class="mt-4 text-2xl font-black text-gray-800 tracking-tight leading-tight"></h1>
                 <p id="display-spec" class="text-blue-600 font-bold uppercase text-sm mt-1 tracking-widest"></p>
                 <p id="display-location" class="text-gray-400 text-sm mt-2 font-medium">📍 <span id="loc-text"></span></p>
-                <button onclick="alert('Режим Заказчика в разработке')" class="mt-10 w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-2xl uppercase tracking-widest text-sm">Заказать расчет сметы</button>
+                
+                <div class="mt-8 space-y-3">
+                    <button onclick="copyMyLink()" class="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg uppercase tracking-widest text-xs flex items-center justify-center">
+                        <span class="mr-2">🔗</span> Копировать мою ссылку
+                    </button>
+                    <button onclick="alert('Режим Заказчика в разработке')" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm transition active:scale-95">
+                        Заказать расчет сметы
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -82,7 +90,6 @@
         const geoData = { "KZ": ["Астана", "Алматы", "Павлодар", "Шымкент"], "RU": ["Москва", "СПБ"] };
         let masterProfile = JSON.parse(localStorage.getItem('masterProfile')) || { services: [] };
 
-        // Функция красивого разделения чисел (150000 -> 150 000)
         function formatNum(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         }
@@ -113,12 +120,12 @@
 
         function goToPriceStep() {
             masterProfile.name = document.getElementById('master-name').value;
+            masterProfile.phone = document.getElementById('master-phone').value;
             masterProfile.city = document.getElementById('master-city').value;
             const specElem = document.getElementById('master-spec');
             masterProfile.spec = specElem.options[specElem.selectedIndex].text;
             
-            if(!masterProfile.name || masterProfile.city === "") return alert("Заполните имя и город!");
-            
+            if(!masterProfile.name || !masterProfile.city || !masterProfile.phone) return alert("Заполните Имя, Город и Телефон!");
             renderServices();
             showScreen('screen-price-setup');
         }
@@ -127,15 +134,12 @@
             const name = document.getElementById('new-service-name').value;
             const unit = document.getElementById('new-service-unit').value;
             const price = document.getElementById('new-service-price').value;
-            
             if(name && unit && price) {
                 masterProfile.services.push({ name, unit, price: parseInt(price) });
                 renderServices();
                 document.getElementById('new-service-name').value = '';
                 document.getElementById('new-service-unit').value = '';
                 document.getElementById('new-service-price').value = '';
-            } else {
-                alert("Заполните все поля услуги!");
             }
         }
 
@@ -144,10 +148,7 @@
             if (!masterProfile.services) masterProfile.services = [];
             container.innerHTML = masterProfile.services.map((s, i) => `
                 <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs">
-                    <div class="flex-1">
-                        <div class="font-bold text-gray-800">${s.name}</div>
-                        <div class="text-gray-400">${s.unit}</div>
-                    </div>
+                    <div class="flex-1 text-left"><div class="font-bold text-gray-800">${s.name}</div><div class="text-gray-400 uppercase text-[10px]">${s.unit}</div></div>
                     <div class="font-black text-blue-600">${formatNum(s.price)} ₸</div>
                     <button onclick="removeService(${i})" class="ml-3 text-red-400 text-lg">✕</button>
                 </div>
@@ -157,6 +158,17 @@
         function removeService(index) {
             masterProfile.services.splice(index, 1);
             renderServices();
+        }
+
+        function copyMyLink() {
+            const dummy = document.createElement('input');
+            const text = window.location.href;
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            alert("Ссылка скопирована! Теперь вы можете отправить её клиенту.");
         }
 
         function saveAndFinish() {
