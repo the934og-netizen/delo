@@ -3,120 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ДЕЛО — Настройка профиля</title>
+    <title>ДЕЛО — Кабинет Мастера</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-100 font-sans min-h-screen">
 
-    <div id="app" class="max-w-md mx-auto min-h-screen p-4">
+    <div id="app" class="max-w-md mx-auto p-4">
         
         <div id="screen-setup" class="bg-white rounded-3xl shadow-xl p-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">Настройка профиля</h1>
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">1. Личные данные</h1>
             
             <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Как вас зовут (или название компании)</label>
-                    <input type="text" id="master-name" placeholder="Иван Иванов / ИП 'Мастер'" class="w-full p-4 bg-gray-50 rounded-2xl border-none ring-1 ring-gray-200">
+                <div class="flex flex-col items-center mb-4">
+                    <div id="photo-preview" class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400 overflow-hidden mb-2">
+                        <span>ФОТО</span>
+                    </div>
+                    <input type="file" id="master-photo" accept="image/*" class="hidden" onchange="handlePhoto(this)">
+                    <button onclick="document.getElementById('master-photo').click()" class="text-blue-600 text-sm font-bold underline">Загрузить лого или фото</button>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Страна</label>
-                    <select id="master-country" onchange="updateRegions()" class="w-full p-4 bg-gray-50 rounded-2xl border-none ring-1 ring-gray-200">
-                        <option value="">Выберите страну</option>
-                        <option value="KZ">Казахстан</option>
-                        <option value="RU">Россия</option>
-                    </select>
-                </div>
+                <input type="text" id="master-name" placeholder="Имя Фамилия / Название ТОО" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-blue-500">
+                
+                <select id="master-country" onchange="updateRegions()" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
+                    <option value="">Выберите страну</option>
+                    <option value="KZ">Казахстан</option>
+                    <option value="RU">Россия</option>
+                </select>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Город / Регион</label>
-                    <select id="master-city" class="w-full p-4 bg-gray-50 rounded-2xl border-none ring-1 ring-gray-200">
-                        <option value="">Сначала выберите страну</option>
-                    </select>
-                </div>
+                <select id="master-city" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
+                    <option value="">Выберите город</option>
+                </select>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Специализация</label>
-                    <select id="master-spec" class="w-full p-4 bg-gray-50 rounded-2xl border-none ring-1 ring-gray-200">
-                        <option value="">Выберите сферу</option>
-                        <option value="mebel">Ремонт мебели</option>
-                        <option value="stroy">Строительные работы</option>
-                        <option value="electro">Электрика</option>
-                        <option value="plumb">Сантехника</option>
-                        <option value="clean">Клининг</option>
-                    </select>
-                </div>
+                <select id="master-spec" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
+                    <option value="">Ваша специализация</option>
+                    <option value="mebel">Ремонт мебели</option>
+                    <option value="electro">Электрика</option>
+                    <option value="stroy">Строительство</option>
+                </select>
 
-                <button onclick="saveProfile()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg mt-4">СОХРАНИТЬ И СОЗДАТЬ ВИЗИТКУ</button>
+                <button onclick="goToPriceStep()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg">ДАЛЕЕ: НАСТРОИТЬ ЦЕНЫ</button>
             </div>
         </div>
 
-        <div id="screen-vizitka" class="hidden bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-            <div class="h-32 bg-gradient-to-r from-blue-600 to-indigo-700 p-6 flex justify-end">
-                <button onclick="showScreen('screen-setup')" class="text-white opacity-50">⚙️</button>
-            </div>
-            <div class="px-6 pb-6 -mt-12 text-center">
-                <div class="inline-block w-24 h-24 bg-white p-1 rounded-full shadow-lg">
-                    <div id="display-photo" class="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-gray-400 font-bold uppercase text-xs">Фото</div>
+        <div id="screen-price-setup" class="hidden bg-white rounded-3xl shadow-xl p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">2. Виды работ</h1>
+            <p class="text-gray-400 text-sm mb-6">Добавьте услуги, которые вы оказываете</p>
+            
+            <div id="services-list" class="space-y-3 mb-6">
                 </div>
-                <h1 id="display-name" class="mt-4 text-2xl font-bold text-gray-800">Загрузка...</h1>
-                <p id="display-spec" class="text-blue-600 font-medium">Специализация</p>
-                <p id="display-location" class="text-gray-400 text-sm mt-1">📍 Город</p>
 
-                <button onclick="showScreen('screen-request')" class="mt-8 w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-blue-200 shadow-lg uppercase tracking-wide">Заказать расчет сметы</button>
+            <div class="bg-blue-50 p-4 rounded-2xl space-y-3 border border-blue-100">
+                <input type="text" id="new-service-name" placeholder="Название услуги" class="w-full p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
+                <div class="flex space-x-2">
+                    <input type="number" id="new-service-price" placeholder="Цена (₸)" class="flex-1 p-3 rounded-xl border-none ring-1 ring-gray-200 text-sm">
+                    <button onclick="addService()" class="bg-blue-600 text-white px-6 rounded-xl font-bold">+</button>
+                </div>
+            </div>
+
+            <button onclick="saveAndFinish()" class="w-full mt-8 bg-green-500 text-white font-bold py-4 rounded-2xl shadow-lg">ГОТОВО: СОЗДАТЬ ВИЗИТКУ</button>
+        </div>
+
+        <div id="screen-vizitka" class="hidden bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+            <button onclick="showScreen('screen-setup')" class="absolute top-6 right-6 z-10 bg-white/20 hover:bg-white/40 p-3 rounded-full backdrop-blur-md transition-all">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="Wait...⚙️"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+
+            <div class="h-40 bg-gradient-to-br from-blue-600 to-indigo-800"></div>
+            <div class="px-6 pb-8 -mt-16 text-center">
+                <div class="inline-block w-32 h-32 bg-white p-1 rounded-full shadow-2xl">
+                    <img id="final-photo" class="hidden w-full h-full object-cover rounded-full" src="">
+                    <div id="final-photo-placeholder" class="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-gray-400 font-bold uppercase">ФОТО</div>
+                </div>
+                <h1 id="display-name" class="mt-4 text-2xl font-black text-gray-800 tracking-tight"></h1>
+                <p id="display-spec" class="text-blue-600 font-bold uppercase text-sm tracking-widest mt-1"></p>
+                <p id="display-location" class="text-gray-400 text-sm mt-2 flex justify-center items-center font-medium">📍 <span id="loc-text" class="ml-1"></span></p>
+
+                <button onclick="alert('Переход к заявке')" class="mt-10 w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-blue-200 shadow-2xl uppercase text-sm tracking-widest">Заказать расчет сметы</button>
             </div>
         </div>
-
-        </div>
+    </div>
 
     <script>
-        // База данных городов (упрощенная для примера, расширим по твоему запросу)
-        const geoData = {
-            "KZ": ["Астана", "Алматы", "Павлодар", "Шымкент", "Караганда", "Актобе"],
-            "RU": ["Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург"]
-        };
+        const geoData = { "KZ": ["Астана", "Алматы", "Павлодар", "Шымкент"], "RU": ["Москва", "СПБ"] };
+        let masterProfile = JSON.parse(localStorage.getItem('masterProfile')) || { services: [] };
 
         function updateRegions() {
             const country = document.getElementById('master-country').value;
             const citySelect = document.getElementById('master-city');
             citySelect.innerHTML = '<option value="">Выберите город</option>';
-            
             if (geoData[country]) {
                 geoData[country].forEach(city => {
                     let opt = document.createElement('option');
-                    opt.value = city;
-                    opt.innerHTML = city;
+                    opt.value = city; opt.innerHTML = city;
                     citySelect.appendChild(opt);
                 });
             }
         }
 
-        function saveProfile() {
-            const profile = {
-                name: document.getElementById('master-name').value,
-                country: document.getElementById('master-country').value,
-                city: document.getElementById('master-city').value,
-                spec: document.getElementById('master-spec').options[document.getElementById('master-spec').selectedIndex].text
-            };
-
-            if(!profile.name || !profile.city) {
-                alert("Пожалуйста, заполните все поля!");
-                return;
+        function handlePhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photo-preview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                    masterProfile.photo = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
             }
+        }
 
-            // Сохраняем в память телефона
-            localStorage.setItem('masterProfile', JSON.stringify(profile));
+        function goToPriceStep() {
+            masterProfile.name = document.getElementById('master-name').value;
+            masterProfile.city = document.getElementById('master-city').value;
+            masterProfile.spec = document.getElementById('master-spec').options[document.getElementById('master-spec').selectedIndex].text;
+            
+            if(!masterProfile.name || !masterProfile.city) return alert("Заполните имя и город!");
+            showScreen('screen-price-setup');
+        }
+
+        function addService() {
+            const name = document.getElementById('new-service-name').value;
+            const price = document.getElementById('new-service-price').value;
+            if(name && price) {
+                masterProfile.services.push({ name, price });
+                renderServices();
+                document.getElementById('new-service-name').value = '';
+                document.getElementById('new-service-price').value = '';
+            }
+        }
+
+        function renderServices() {
+            const container = document.getElementById('services-list');
+            container.innerHTML = masterProfile.services.map((s, i) => `
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <span class="font-medium text-gray-700">${s.name}</span>
+                    <span class="font-bold text-blue-600">${s.price} ₸</span>
+                </div>
+            `).join('');
+        }
+
+        function saveAndFinish() {
+            localStorage.setItem('masterProfile', JSON.stringify(masterProfile));
             loadProfile();
         }
 
         function loadProfile() {
             const data = localStorage.getItem('masterProfile');
             if (data) {
-                const profile = JSON.parse(data);
-                document.getElementById('display-name').innerText = profile.name;
-                document.getElementById('display-spec').innerText = profile.spec;
-                document.getElementById('display-location').innerText = `📍 ${profile.city}`;
+                const p = JSON.parse(data);
+                document.getElementById('display-name').innerText = p.name;
+                document.getElementById('display-spec').innerText = p.spec;
+                document.getElementById('loc-text').innerText = p.city;
+                if(p.photo) {
+                    document.getElementById('final-photo').src = p.photo;
+                    document.getElementById('final-photo').classList.remove('hidden');
+                    document.getElementById('final-photo-placeholder').classList.add('hidden');
+                }
                 showScreen('screen-vizitka');
             } else {
                 showScreen('screen-setup');
@@ -128,7 +172,6 @@
             document.getElementById(id).classList.remove('hidden');
         }
 
-        // Запуск при загрузке
         loadProfile();
     </script>
 </body>
