@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ДЕЛО — Кабинет Мастера</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-toast { animation: slideUp 0.3s ease-out forwards; }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans min-h-screen text-gray-900">
 
-    <div id="app" class="max-w-md mx-auto p-4">
+    <div id="app" class="max-w-md mx-auto p-4 relative">
         
+        <div id="toast-container" class="fixed bottom-10 left-0 right-0 px-8 z-50 pointer-events-none flex flex-col items-center"></div>
+
         <div id="screen-setup" class="bg-white rounded-3xl shadow-xl p-6">
             <h1 class="text-2xl font-bold text-gray-800 mb-6">1. Личные данные</h1>
             <div class="space-y-4">
@@ -20,11 +26,8 @@
                     <input type="file" id="master-photo" accept="image/*" class="hidden" onchange="handlePhoto(this)">
                     <button onclick="document.getElementById('master-photo').click()" class="text-blue-600 text-sm font-bold underline">Загрузить лого или фото</button>
                 </div>
-                
                 <input type="text" id="master-name" placeholder="Имя Фамилия / Название ТОО" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
-                
                 <input type="tel" id="master-phone" placeholder="+7 (___) ___-__-__" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
-                
                 <select id="master-country" onchange="updateRegions()" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
                     <option value="">Выберите страну</option>
                     <option value="KZ">Казахстан</option>
@@ -60,11 +63,8 @@
         </div>
 
         <div id="screen-vizitka" class="hidden bg-white rounded-3xl shadow-2xl overflow-hidden relative">
-            <button onclick="showScreen('screen-setup')" class="absolute top-6 right-6 z-10 bg-white/20 p-3 rounded-full backdrop-blur-md transition hover:bg-white/40">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
+            <button onclick="showScreen('screen-setup')" class="absolute top-6 right-6 z-10 bg-white/20 p-3 rounded-full backdrop-blur-md">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </button>
             <div class="h-40 bg-gradient-to-br from-blue-600 to-indigo-800"></div>
             <div class="px-6 pb-8 -mt-16 text-center">
@@ -77,60 +77,81 @@
                 <p id="display-location" class="text-gray-400 text-sm mt-2 font-medium italic">📍 <span id="loc-text"></span></p>
                 
                 <div class="mt-8 space-y-3">
-                    <button onclick="copyMyLink()" class="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg uppercase tracking-widest text-[10px] flex items-center justify-center">
+                    <button onclick="copyMyLink()" class="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg uppercase tracking-widest text-[10px] flex items-center justify-center transition active:scale-95">
                         <span class="mr-2 text-base">🔗</span> Копировать мою ссылку
                     </button>
-                    <button onclick="alert('Этап 3: Расчет')" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm transition active:scale-95">
+                    <button onclick="showScreen('screen-request-calc')" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm transition active:scale-95">
                         Заказать расчет сметы
                     </button>
-                    <button onclick="alert('Этап 3: Замер')" class="w-full bg-gray-100 text-gray-600 font-bold py-4 rounded-2xl uppercase tracking-widest text-[10px] border border-gray-200">
+                    <button onclick="showScreen('screen-request-visit')" class="w-full bg-gray-100 text-gray-600 font-bold py-4 rounded-2xl uppercase tracking-widest text-[10px] border border-gray-200 transition active:scale-95">
                          Нужен замер / Консультация
                     </button>
                 </div>
             </div>
         </div>
+
+        <div id="screen-request-visit" class="hidden bg-white rounded-3xl shadow-xl p-6">
+            <div class="flex items-center mb-6">
+                <button onclick="showScreen('screen-vizitka')" class="mr-4 text-gray-400">←</button>
+                <h1 class="text-xl font-bold text-gray-800">Заявка на замер</h1>
+            </div>
+            <div class="space-y-4">
+                <input type="text" id="visit-address" placeholder="Адрес объекта" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="visit-desc" placeholder="Что нужно сделать? Опишите кратко..." rows="4" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <input type="text" id="visit-time" placeholder="Удобное время (н-р: завтра в 10:00)" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
+                
+                <div class="p-4 bg-blue-50 rounded-2xl text-xs text-blue-600 leading-relaxed">
+                    Мастер получит вашу заявку и свяжется с вами для подтверждения времени выезда.
+                </div>
+                
+                <button onclick="sendVisitRequest()" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm transition active:scale-95">
+                    Отправить мастеру
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <script>
         const geoData = { "KZ": ["Астана", "Алматы", "Павлодар", "Шымкент"], "RU": ["Москва", "СПБ"] };
         let masterProfile = JSON.parse(localStorage.getItem('masterProfile')) || { services: [] };
 
-        // МАСКА ТЕЛЕФОНА
+        // Кастомное уведомление
+        function showToast(text) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl mb-4 animate-toast text-sm font-medium';
+            toast.innerText = text;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // Маска телефона
         const phoneInput = document.getElementById('master-phone');
         phoneInput.addEventListener('input', function(e) {
             let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
-            if (!x[2]) {
-                e.target.value = '+7';
-            } else {
-                e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
-            }
+            if (!x[2]) e.target.value = '+7';
+            else e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
         });
-        phoneInput.addEventListener('focus', (e) => { if(!e.target.value) e.target.value = '+7'; });
 
-        function formatNum(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        }
+        function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
 
         function updateRegions() {
             const country = document.getElementById('master-country').value;
             const citySelect = document.getElementById('master-city');
             citySelect.innerHTML = '<option value="">Выберите город</option>';
-            if (geoData[country]) {
-                geoData[country].forEach(city => {
-                    let opt = document.createElement('option');
-                    opt.value = city; opt.innerHTML = city;
-                    citySelect.appendChild(opt);
-                });
-            }
+            if (geoData[country]) geoData[country].forEach(city => {
+                let opt = document.createElement('option'); opt.value = city; opt.innerHTML = city; citySelect.appendChild(opt);
+            });
         }
 
         function handlePhoto(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = (e) => {
                     document.getElementById('photo-preview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
                     masterProfile.photo = e.target.result;
-                }
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
@@ -141,8 +162,10 @@
             masterProfile.city = document.getElementById('master-city').value;
             const specElem = document.getElementById('master-spec');
             masterProfile.spec = specElem.options[specElem.selectedIndex].text;
-            
-            if(!masterProfile.name || !masterProfile.city || masterProfile.phone.length < 10) return alert("Заполните Имя, Город и верный Телефон!");
+            if(!masterProfile.name || !masterProfile.city || masterProfile.phone.length < 10) {
+                showToast("Заполните Имя, Город и Телефон!");
+                return;
+            }
             renderServices();
             showScreen('screen-price-setup');
         }
@@ -157,14 +180,14 @@
                 document.getElementById('new-service-name').value = '';
                 document.getElementById('new-service-unit').value = '';
                 document.getElementById('new-service-price').value = '';
+                showToast("Услуга добавлена");
             }
         }
 
         function renderServices() {
             const container = document.getElementById('services-list');
-            if (!masterProfile.services) masterProfile.services = [];
-            container.innerHTML = masterProfile.services.map((s, i) => `
-                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs animate-fadeIn">
+            container.innerHTML = (masterProfile.services || []).map((s, i) => `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs">
                     <div class="flex-1 text-left"><div class="font-bold text-gray-800">${s.name}</div><div class="text-gray-400 uppercase text-[10px]">${s.unit}</div></div>
                     <div class="font-black text-blue-600">${formatNum(s.price)} ₸</div>
                     <button onclick="removeService(${i})" class="ml-3 text-red-400 text-lg">✕</button>
@@ -175,17 +198,32 @@
         function removeService(index) {
             masterProfile.services.splice(index, 1);
             renderServices();
+            showToast("Удалено");
         }
 
         function copyMyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
-                alert("Ссылка скопирована! Отправьте её клиенту.");
+                showToast("✅ Ссылка скопирована!");
             });
+        }
+
+        function sendVisitRequest() {
+            const addr = document.getElementById('visit-address').value;
+            const desc = document.getElementById('visit-desc').value;
+            if(!addr || !desc) return showToast("Заполните адрес и описание!");
+            
+            showToast("🚀 Отправка заявки...");
+            // Здесь будет логика отправки в Telegram
+            setTimeout(() => {
+                showToast("✅ Заявка отправлена!");
+                showScreen('screen-vizitka');
+            }, 1500);
         }
 
         function saveAndFinish() {
             localStorage.setItem('masterProfile', JSON.stringify(masterProfile));
             loadProfile();
+            showToast("Профиль сохранен!");
         }
 
         function loadProfile() {
@@ -208,10 +246,9 @@
         }
 
         function showScreen(id) {
-            document.getElementById('screen-setup').classList.add('hidden');
-            document.getElementById('screen-price-setup').classList.add('hidden');
-            document.getElementById('screen-vizitka').classList.add('hidden');
+            ['screen-setup', 'screen-price-setup', 'screen-vizitka', 'screen-request-visit'].forEach(s => document.getElementById(s).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
+            window.scrollTo(0,0);
         }
 
         loadProfile();
