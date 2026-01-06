@@ -208,17 +208,29 @@
         }
 
         function sendVisitRequest() {
-            const addr = document.getElementById('visit-address').value;
-            const desc = document.getElementById('visit-desc').value;
-            if(!addr || !desc) return showToast("Заполните адрес и описание!");
-            
-            showToast("🚀 Отправка заявки...");
-            // Здесь будет логика отправки в Telegram
-            setTimeout(() => {
-                showToast("✅ Заявка отправлена!");
-                showScreen('screen-vizitka');
-            }, 1500);
-        }
+    const addr = document.getElementById('visit-address').value;
+    const desc = document.getElementById('visit-desc').value;
+    const time = document.getElementById('visit-time').value;
+    
+    if(!addr || !desc) return showToast("Заполните адрес и описание!");
+    
+    // Очищаем номер телефона мастера от лишних символов для ссылки (+7 (707) -> 7707)
+    const cleanPhone = masterProfile.phone.replace(/\D/g, '');
+    
+    // Формируем текст сообщения
+    const message = `Здравствуйте! Нужен замер.\n📍 Адрес: ${addr}\n🛠 Задача: ${desc}\n⏰ Время: ${time}`;
+    
+    // Кодируем текст для ссылки
+    const encodedText = encodeURIComponent(message);
+    
+    showToast("🚀 Переход в WhatsApp...");
+    
+    // Открываем WhatsApp через 1 секунду
+    setTimeout(() => {
+        window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, '_blank');
+        showScreen('screen-vizitka');
+    }, 1000);
+}
 
         function saveAndFinish() {
             localStorage.setItem('masterProfile', JSON.stringify(masterProfile));
@@ -255,3 +267,4 @@
     </script>
 </body>
 </html>
+
