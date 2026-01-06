@@ -202,7 +202,23 @@
             document.getElementById(id).classList.remove('hidden');
         }
 
-        loadProfile();
+        loadProfile(// 1. Добавляем слушатель события для маски телефона (в самый конец скрипта или внутрь loadProfile)
+document.getElementById('master-phone').addEventListener('input', function (e) {
+    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+    
+    // Формируем маску: +7 (000) 000-00-00
+    if (!x[2]) {
+        e.target.value = '+7';
+    } else {
+        e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+    }
+});
+
+// 2. Инициализация поля при фокусе (чтобы сразу появлялось +7)
+document.getElementById('master-phone').addEventListener('focus', function (e) {
+    if (!e.target.value) e.target.value = '+7';
+}););
     </script>
 </body>
 </html>
+
