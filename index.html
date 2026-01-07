@@ -17,30 +17,32 @@
         
         <div id="toast-container" class="fixed bottom-10 left-0 right-0 px-8 z-50 pointer-events-none flex flex-col items-center"></div>
 
+        <div id="confirm-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+            <div class="bg-white rounded-[32px] p-8 w-full shadow-2xl animate-in text-center">
+                <div class="text-4xl mb-4">🏠</div>
+                <h3 class="text-xl font-black mb-2">В главное меню?</h3>
+                <p class="text-gray-400 text-sm mb-6">Профиль мастера сохранится, вы сможете вернуться позже.</p>
+                <div class="flex space-x-3">
+                    <button onclick="toggleConfirmModal(false)" class="flex-1 py-4 rounded-2xl bg-gray-100 font-bold">Отмена</button>
+                    <button onclick="exitToMain()" class="flex-1 py-4 rounded-2xl bg-blue-600 text-white font-bold">Да, выйти</button>
+                </div>
+            </div>
+        </div>
+
         <div id="screen-welcome" class="hidden min-h-[80vh] flex flex-col justify-center items-center text-center animate-in">
             <div class="mb-8">
-                <div class="w-20 h-20 bg-blue-600 rounded-3xl mx-auto flex items-center justify-center shadow-xl mb-4">
-                    <span class="text-white text-4xl font-black">Д</span>
-                </div>
-                <h1 class="text-3xl font-black tracking-tighter italic uppercase text-blue-600">Дело</h1>
-                <p class="text-gray-500 mt-2">Ваш бизнес в кармане</p>
+                <div class="w-20 h-20 bg-blue-600 rounded-3xl mx-auto flex items-center justify-center shadow-xl mb-4 text-white text-4xl font-black">Д</div>
+                <h1 class="text-3xl font-black italic uppercase text-blue-600">Дело</h1>
+                <p class="text-gray-500 mt-2">Бизнес-инструмент мастера</p>
             </div>
-            
             <div class="w-full space-y-4 px-4">
-                <button onclick="roleSelect('master')" class="w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent active:border-blue-500 transition-all text-left flex items-center group">
+                <button onclick="roleSelect('master')" class="w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent active:border-blue-500 text-left flex items-center">
                     <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl mr-4">🛠</div>
-                    <div>
-                        <div class="font-bold text-lg leading-tight">Я Мастер</div>
-                        <div class="text-sm text-gray-400">Прайс, сметы и учет сделок</div>
-                    </div>
+                    <div><div class="font-bold text-lg">Я Мастер</div><div class="text-sm text-gray-400">Прайс, сметы, история заказов</div></div>
                 </button>
-
-                <button onclick="roleSelect('customer')" class="w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent active:border-orange-500 transition-all text-left flex items-center group">
+                <button onclick="roleSelect('customer')" class="w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent active:border-orange-500 text-left flex items-center">
                     <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-2xl mr-4">🏠</div>
-                    <div>
-                        <div class="font-bold text-lg leading-tight">Мне нужен мастер</div>
-                        <div class="text-sm text-gray-400">Найти профи в Павлодаре</div>
-                    </div>
+                    <div><div class="font-bold text-lg">Мне нужен мастер</div><div class="text-sm text-gray-400">Найти профи в Павлодаре</div></div>
                 </button>
             </div>
         </div>
@@ -49,66 +51,57 @@
             <h1 class="text-2xl font-bold mb-6 italic">1. Профиль мастера</h1>
             <div class="space-y-4">
                 <div class="flex flex-col items-center mb-4">
-                    <div id="photo-preview" class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400 overflow-hidden mb-2"><span>ФОТО</span></div>
+                    <div id="photo-preview" class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400 overflow-hidden mb-2 font-bold">ФОТО</div>
                     <input type="file" id="master-photo" accept="image/*" class="hidden" onchange="handlePhoto(this)">
                     <button onclick="document.getElementById('master-photo').click()" class="text-blue-600 text-sm font-bold underline">Изменить фото</button>
                 </div>
                 <input type="text" id="master-name" placeholder="Имя Фамилия" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
                 <input type="tel" id="master-phone" placeholder="+7 (___) ___-__-__" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
-                <select id="master-city" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
-                    <option value="Павлодар">Павлодар</option>
-                    <option value="Астана">Астана</option>
-                    <option value="Алматы">Алматы</option>
-                </select>
-                <select id="master-spec" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
-                    <option value="Отделочные работы">Отделочные работы</option>
-                    <option value="Электрика">Электрика</option>
-                    <option value="Сантехника">Сантехника</option>
-                    <option value="Сборка мебели">Сборка мебели</option>
-                </select>
-                <button onclick="goToPriceStep()" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm">Далее: Настроить прайс</button>
+                <select id="master-city" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none"><option value="Павлодар">Павлодар</option><option value="Астана">Астана</option><option value="Алматы">Алматы</option></select>
+                <select id="master-spec" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none"><option value="Отделочные работы">Отделочные работы</option><option value="Электрика">Электрика</option><option value="Сантехника">Сантехника</option></select>
+                <button onclick="goToPriceStep()" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm">Далее</button>
             </div>
         </div>
 
         <div id="screen-price-setup" class="hidden bg-white rounded-3xl shadow-xl p-6 animate-in">
-            <h1 class="text-2xl font-bold mb-2 italic">2. Прайс-лист</h1>
-            <p class="text-xs text-gray-400 mb-6 uppercase tracking-wider">Ваши услуги и расценки</p>
-            <div id="services-list" class="space-y-2 mb-6 max-h-64 overflow-y-auto p-1"></div>
+            <h1 class="text-2xl font-bold mb-6 italic">2. Ваш Прайс</h1>
+            <div id="services-list" class="space-y-2 mb-6 max-h-60 overflow-y-auto"></div>
             <div class="bg-blue-50 p-4 rounded-3xl space-y-3 border border-blue-100">
-                <input type="text" id="new-service-name" placeholder="Название услуги" class="w-full p-3 rounded-xl border-none ring-1 ring-gray-200">
+                <input type="text" id="new-service-name" placeholder="Услуга" class="w-full p-3 rounded-xl border-none ring-1 ring-gray-200">
                 <div class="flex space-x-2">
-                    <input type="text" id="new-service-unit" placeholder="ед.изм (м2, шт)" class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200">
+                    <input type="text" id="new-service-unit" placeholder="ед.изм" class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200">
                     <input type="number" id="new-service-price" placeholder="Цена ₸" class="w-1/2 p-3 rounded-xl border-none ring-1 ring-gray-200">
                 </div>
                 <button onclick="addService()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xl">+</button>
             </div>
-            <button onclick="saveAndFinish()" class="w-full mt-6 bg-green-500 text-white font-black py-5 rounded-2xl shadow-lg">ГОТОВО: СОЗДАТЬ ВИЗИТКУ</button>
+            <button onclick="saveAndFinish()" class="w-full mt-6 bg-green-500 text-white font-black py-5 rounded-2xl shadow-lg">ГОТОВО</button>
         </div>
 
         <div id="screen-vizitka" class="hidden bg-white rounded-[40px] shadow-2xl overflow-hidden relative animate-in">
-            <button onclick="if(confirm('Выйти в главное меню? Профиль сохранится.')){showScreen('screen-welcome');}" class="absolute top-6 right-6 z-10 bg-white/20 p-3 rounded-full backdrop-blur-md text-white">⚙️</button>
+            <button onclick="toggleConfirmModal(true)" class="absolute top-6 right-6 z-10 bg-white/20 p-3 rounded-full backdrop-blur-md text-white">⚙️</button>
             <div class="h-44 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900"></div>
             <div class="px-6 pb-10 -mt-16 text-center">
                 <div class="inline-block w-32 h-32 bg-white p-1 rounded-full shadow-2xl overflow-hidden border-4 border-white">
                     <img id="final-photo" class="hidden w-full h-full object-cover rounded-full" src="">
                     <div id="final-photo-placeholder" class="w-full h-full bg-gray-100 rounded-full flex items-center justify-center text-gray-400 font-bold uppercase">ФОТО</div>
                 </div>
-                <h1 id="display-name" class="mt-4 text-2xl font-black text-gray-800 tracking-tight leading-tight"></h1>
-                <p id="display-spec" class="text-blue-600 font-bold uppercase text-[10px] mt-1 tracking-[0.2em] bg-blue-50 inline-block px-3 py-1 rounded-full"></p>
-                <p id="display-location" class="text-gray-400 text-sm mt-3 font-medium">📍 <span id="loc-text"></span></p>
-                
+                <h1 id="display-name" class="mt-4 text-2xl font-black text-gray-800 tracking-tight"></h1>
+                <p id="display-spec" class="text-blue-600 font-bold uppercase text-[10px] mt-1 tracking-widest bg-blue-50 inline-block px-3 py-1 rounded-full"></p>
+                <p class="text-gray-400 text-sm mt-3 font-medium">📍 <span id="loc-text"></span></p>
                 <div class="mt-10 space-y-4">
-                    <button onclick="copyMyLink()" class="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg uppercase tracking-widest text-[10px] flex items-center justify-center active:scale-95 transition-transform">
-                        <span class="mr-2">🔗</span> Копировать мою ссылку
-                    </button>
-                    <button onclick="openCalc()" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm active:scale-95 transition-transform">
-                        Заказать расчет сметы
-                    </button>
-                    <button onclick="showScreen('screen-request-visit')" class="w-full bg-gray-100 text-gray-500 font-bold py-4 rounded-2xl uppercase tracking-widest text-[10px] border border-gray-200">
-                         Нужен замер / Консультация
-                    </button>
+                    <button onclick="openCalc()" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm">Заказать расчет сметы</button>
+                    <button onclick="showMyOrders()" class="w-full bg-white text-gray-700 font-bold py-4 rounded-2xl shadow-sm border border-gray-200 uppercase tracking-widest text-[10px] flex items-center justify-center">💼 Мои заказы</button>
+                    <button onclick="copyMyLink()" class="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl uppercase tracking-widest text-[10px]">🔗 Поделиться визиткой</button>
                 </div>
             </div>
+        </div>
+
+        <div id="screen-orders" class="hidden bg-white rounded-3xl shadow-xl p-6 animate-in">
+            <div class="flex items-center mb-6">
+                <button onclick="showScreen('screen-vizitka')" class="mr-4 text-gray-400 text-xl">←</button>
+                <h1 class="text-xl font-bold">История заказов</h1>
+            </div>
+            <div id="orders-list" class="space-y-4 max-h-[70vh] overflow-y-auto"></div>
         </div>
 
         <div id="screen-request-calc" class="hidden bg-white rounded-3xl shadow-xl p-6 animate-in">
@@ -117,67 +110,44 @@
                 <h1 class="text-xl font-bold">Выбор услуг</h1>
             </div>
             <div id="calc-services-list" class="space-y-4 mb-32 min-h-[200px]"></div>
-            
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-lg border-t border-gray-100 max-w-md mx-auto z-40">
                 <div class="flex justify-between items-center mb-4 px-2">
-                    <span class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Предварительный итог:</span>
+                    <span class="text-gray-400 font-bold uppercase text-[10px]">Предварительный итог:</span>
                     <span id="calc-total" class="text-2xl font-black text-blue-600">0 ₸</span>
                 </div>
-                <button onclick="openDealModal()" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm">
-                    🤝 Ударить по рукам
-                </button>
+                <button onclick="openDealModal()" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-sm">🤝 Ударить по рукам</button>
             </div>
         </div>
 
         <div id="deal-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-end">
             <div class="bg-white w-full rounded-t-[40px] p-8 animate-in shadow-2xl">
-                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
-                <h2 class="text-2xl font-black mb-2 text-gray-800">Оформление сделки</h2>
+                <h2 class="text-2xl font-black mb-6">Оформление сделки</h2>
                 <div class="space-y-5">
                     <div class="flex justify-between items-center p-4 bg-gray-50 rounded-2xl">
                         <span class="text-gray-500 font-bold text-xs uppercase">Сумма заказа</span>
                         <span id="modal-total-display" class="font-black text-xl text-blue-600">0 ₸</span>
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Предоплата (если есть)</label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Предоплата</label>
                         <input type="number" id="prepayment-amount" placeholder="0 ₸" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none mt-1 font-bold">
                     </div>
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Способ оплаты</label>
-                        <select id="pay-method" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none mt-1 font-bold">
-                            <option value="Наличные">Наличные</option>
-                            <option value="Перевод">Перевод (Kaspi/Банк)</option>
-                        </select>
+                        <select id="pay-method" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none mt-1 font-bold"><option value="Наличные">Наличные</option><option value="Перевод">Перевод</option></select>
                     </div>
-                    <button onclick="confirmDeal()" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl">✍️ Подтвердить и отправить</button>
+                    <button onclick="confirmDeal()" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl">✍️ Подтвердить</button>
                     <button onclick="toggleModal(false)" class="w-full text-gray-400 py-2 text-xs font-bold uppercase">Назад</button>
                 </div>
             </div>
         </div>
 
         <div id="screen-general-order" class="hidden bg-white rounded-3xl shadow-xl p-6 animate-in">
-            <div class="flex items-center mb-8">
-                <button onclick="showScreen('screen-welcome')" class="mr-4 text-gray-400">←</button>
-                <h1 class="text-xl font-bold text-blue-600">Опубликовать заказ</h1>
-            </div>
+            <div class="flex items-center mb-8"><button onclick="showScreen('screen-welcome')" class="mr-4 text-gray-400">←</button><h1 class="text-xl font-bold text-blue-600">Опубликовать заказ</h1></div>
             <div class="space-y-4">
                 <input type="text" id="gen-city" value="Павлодар" readonly class="w-full p-4 bg-gray-100 rounded-2xl text-gray-400 outline-none">
-                <textarea id="gen-task" placeholder="Какая работа требуется? (например: ремонт шкафа купе)" rows="4" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none"></textarea>
+                <textarea id="gen-task" placeholder="Какая работа требуется?" rows="4" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none"></textarea>
                 <input type="tel" id="gen-phone" placeholder="Ваш номер телефона" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
-                <button onclick="sendToMarketplace()" class="w-full bg-orange-500 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-sm">Опубликовать в канале</button>
-            </div>
-        </div>
-
-        <div id="screen-request-visit" class="hidden bg-white rounded-3xl shadow-xl p-6 animate-in">
-            <div class="flex items-center mb-6">
-                <button onclick="showScreen('screen-vizitka')" class="mr-4 text-gray-400 text-xl">←</button>
-                <h1 class="text-xl font-bold text-gray-800">Заявка на замер</h1>
-            </div>
-            <div class="space-y-4">
-                <input type="text" id="visit-address" placeholder="Адрес объекта" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
-                <textarea id="visit-desc" placeholder="Что нужно сделать?" rows="4" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none"></textarea>
-                <input type="text" id="visit-time" placeholder="Удобное время" class="w-full p-4 bg-gray-50 rounded-2xl ring-1 ring-gray-200 outline-none">
-                <button onclick="sendVisitRequest()" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl">Отправить мастеру</button>
+                <button onclick="sendToMarketplace()" class="w-full bg-orange-500 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-sm">Опубликовать в канале</button>
             </div>
         </div>
 
@@ -188,6 +158,7 @@
         const CHANNEL_ID = '@delo_zakazy';
 
         let masterProfile = JSON.parse(localStorage.getItem('masterProfile')) || null;
+        let masterOrders = JSON.parse(localStorage.getItem('masterOrders')) || [];
         let customerOrder = {}; 
         let currentTotal = 0;
 
@@ -197,14 +168,16 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = 'bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl mb-4 animate-in text-sm font-medium z-[100]';
-            toast.innerText = text;
-            container.appendChild(toast);
+            toast.innerText = text; container.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
+        // КРАСИВОЕ ОКНО ВЫХОДА
+        function toggleConfirmModal(show) { document.getElementById('confirm-modal').classList.toggle('hidden', !show); }
+        function exitToMain() { toggleConfirmModal(false); showScreen('screen-welcome'); }
+
         function setupPhoneMask(id) {
-            const el = document.getElementById(id);
-            if(!el) return;
+            const el = document.getElementById(id); if(!el) return;
             el.addEventListener('input', e => {
                 let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
                 if (!x[2]) e.target.value = '+7';
@@ -219,10 +192,9 @@
         }
 
         function showScreen(id) {
-            const screens = ['screen-welcome', 'screen-general-order', 'screen-setup', 'screen-price-setup', 'screen-vizitka', 'screen-request-visit', 'screen-request-calc'];
+            const screens = ['screen-welcome', 'screen-general-order', 'screen-setup', 'screen-price-setup', 'screen-vizitka', 'screen-orders', 'screen-request-calc'];
             screens.forEach(s => { const el = document.getElementById(s); if(el) el.classList.add('hidden'); });
             document.getElementById(id).classList.remove('hidden');
-            window.scrollTo(0,0);
         }
 
         function handlePhoto(input) {
@@ -240,14 +212,12 @@
         function goToPriceStep() {
             const name = document.getElementById('master-name').value;
             const phone = document.getElementById('master-phone').value;
-            if(!name || phone.length < 10) return showToast("Заполните имя и телефон!");
+            if(!name || phone.length < 10) return showToast("Заполните форму!");
             if(!masterProfile) masterProfile = { services: [] };
-            masterProfile.name = name;
-            masterProfile.phone = phone;
+            masterProfile.name = name; masterProfile.phone = phone;
             masterProfile.city = document.getElementById('master-city').value;
             masterProfile.spec = document.getElementById('master-spec').value;
-            renderServices();
-            showScreen('screen-price-setup');
+            renderServices(); showScreen('screen-price-setup');
         }
 
         function addService() {
@@ -266,10 +236,10 @@
         function renderServices() {
             const container = document.getElementById('services-list');
             container.innerHTML = (masterProfile.services || []).map((s, i) => `
-                <div class="flex justify-between items-center bg-white p-3 rounded-2xl shadow-sm border border-gray-100 text-xs">
+                <div class="flex justify-between items-center bg-white p-3 rounded-2xl shadow-sm border border-gray-100 text-xs mb-2">
                     <div class="flex-1"><b>${s.name}</b><br><span class="text-gray-400 uppercase text-[10px]">${s.unit}</span></div>
                     <div class="font-black text-blue-600">${formatNum(s.price)} ₸</div>
-                    <button onclick="removeService(${i})" class="ml-4 text-red-400">✕</button>
+                    <button onclick="removeService(${i})" class="ml-4 text-red-400 font-bold">✕</button>
                 </div>
             `).join('');
         }
@@ -279,25 +249,48 @@
         function saveAndFinish() {
             localStorage.setItem('masterProfile', JSON.stringify(masterProfile));
             loadProfile();
-            showToast("Профиль сохранен!");
         }
 
-        function openCalc() {
-            customerOrder = {};
-            renderCalcList();
-            showScreen('screen-request-calc');
+        // МОИ ЗАКАЗЫ
+        function showMyOrders() {
+            const container = document.getElementById('orders-list');
+            if(masterOrders.length === 0) {
+                container.innerHTML = '<div class="text-center py-20 text-gray-400">У вас пока нет оформленных сделок</div>';
+            } else {
+                container.innerHTML = masterOrders.slice().reverse().map(o => `
+                    <div class="bg-gray-50 p-4 rounded-3xl border border-gray-100 shadow-sm animate-in">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full uppercase">${o.date}</span>
+                            <span class="font-black text-gray-800">${formatNum(o.total)} ₸</span>
+                        </div>
+                        <div class="text-[10px] text-gray-400 truncate mb-2">${o.summary}</div>
+                        <div class="flex justify-between text-xs font-bold pt-2 border-t border-dashed border-gray-200">
+                            <span class="text-green-500">Внесено: ${formatNum(o.prepay)} ₸</span>
+                            <span class="text-orange-500">Остаток: ${formatNum(o.total - o.prepay)} ₸</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            showScreen('screen-orders');
         }
+
+        // КАЛЬКУЛЯТОР
+        function openCalc() { customerOrder = {}; renderCalcList(); showScreen('screen-request-calc'); }
 
         function renderCalcList() {
             const container = document.getElementById('calc-services-list');
             container.innerHTML = masterProfile.services.map((s, i) => {
                 const qty = customerOrder[i] || 0;
                 return `
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-center">
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-center animate-in">
                     <div class="flex-1"><div class="font-bold text-gray-800">${s.name}</div><div class="text-blue-500 font-black text-sm">${formatNum(s.price)} ₸ / ${s.unit}</div></div>
                     <div class="flex items-center space-x-2 bg-gray-100 p-1 rounded-2xl">
-                        <button onclick="changeQty(${i},-1)" class="w-10 h-10 bg-white rounded-xl font-bold text-gray-500">−</button>
-                        <input type="number" value="${qty}" oninput="handleManualInput(${i}, this.value)" class="w-12 text-center font-black bg-transparent border-none focus:ring-0">
+                        <button onclick="changeQty(${i},-1)" class="w-10 h-10 bg-white rounded-xl shadow-sm font-bold text-gray-500">−</button>
+                        <input type="number" value="${qty}" 
+                            onfocus="if(this.value=='0') this.value=''" 
+                            onblur="if(this.value=='') this.value='0'"
+                            oninput="handleManualInput(${i}, this.value)" 
+                            class="w-12 text-center font-black bg-transparent border-none focus:ring-0">
                         <button onclick="changeQty(${i},1)" class="w-10 h-10 bg-blue-600 rounded-xl text-white font-bold">+</button>
                     </div>
                 </div>`;
@@ -307,73 +300,40 @@
 
         function handleManualInput(i, v) { let n = parseInt(v) || 0; if(n<=0) delete customerOrder[i]; else customerOrder[i]=n; calculateTotal(); }
         function changeQty(i, d) { let c = customerOrder[i]||0; c=Math.max(0,c+d); if(c===0) delete customerOrder[i]; else customerOrder[i]=c; renderCalcList(); }
-        
-        function calculateTotal() {
-            currentTotal = 0;
-            for(let i in customerOrder) currentTotal += masterProfile.services[i].price * customerOrder[i];
-            document.getElementById('calc-total').innerText = formatNum(currentTotal) + " ₸";
-        }
+        function calculateTotal() { currentTotal = 0; for(let i in customerOrder) currentTotal += masterProfile.services[i].price * customerOrder[i]; document.getElementById('calc-total').innerText = formatNum(currentTotal) + " ₸"; }
 
-        function toggleModal(show) {
-            document.getElementById('deal-modal').classList.toggle('hidden', !show);
-            if(show) {
-                document.getElementById('modal-total-display').innerText = formatNum(currentTotal) + " ₸";
-                document.getElementById('prepayment-amount').value = "";
-            }
-        }
-
-        function openDealModal() {
-            if(currentTotal === 0) return showToast("Сначала выберите услуги");
-            toggleModal(true);
-        }
+        function toggleModal(show) { document.getElementById('deal-modal').classList.toggle('hidden', !show); if(show) document.getElementById('prepayment-amount').value = ""; document.getElementById('modal-total-display').innerText = formatNum(currentTotal) + " ₸"; }
+        function openDealModal() { if(currentTotal === 0) return showToast("Выберите услуги"); toggleModal(true); }
 
         function confirmDeal() {
-            const prepay = document.getElementById('prepayment-amount').value || 0;
+            const prepay = parseInt(document.getElementById('prepayment-amount').value) || 0;
             const method = document.getElementById('pay-method').value;
             const rest = currentTotal - prepay;
+            const dateStr = new Date().toLocaleDateString();
             let list = "";
-            for(let i in customerOrder) {
-                const s = masterProfile.services[i];
-                list += `\n- ${s.name}: ${customerOrder[i]} ${s.unit}`;
-            }
-            const msg = `🤝 СДЕЛКА ПОДТВЕРЖДЕНА\n--------------------\nМастер: ${masterProfile.name}\nУслуги:${list}\n--------------------\n💰 ИТОГО: ${formatNum(currentTotal)} ₸\n✅ Внесено: ${formatNum(prepay)} ₸ (${method})\n⏳ ОСТАТОК: ${formatNum(rest)} ₸\n\nПодтверждение договора и получения средств.`;
+            for(let i in customerOrder) { const s = masterProfile.services[i]; list += `\n- ${s.name}: ${customerOrder[i]} ${s.unit}`; }
+            
+            // Сохраняем в историю
+            masterOrders.push({ date: dateStr, total: currentTotal, prepay: prepay, summary: list.replace(/\n/g, ' ').substring(0, 50) + '...' });
+            localStorage.setItem('masterOrders', JSON.stringify(masterOrders));
+
+            const msg = `🤝 СДЕЛКА ПОДТВЕРЖДЕНА (${dateStr})\n--------------------\nМастер: ${masterProfile.name}\nУслуги:${list}\n--------------------\n💰 ИТОГО: ${formatNum(currentTotal)} ₸\n✅ Внесено: ${formatNum(prepay)} ₸ (${method})\n⏳ ОСТАТОК: ${formatNum(rest)} ₸`;
             window.open(`https://wa.me/${masterProfile.phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
-            toggleModal(false);
-            showScreen('screen-vizitka');
+            toggleModal(false); showScreen('screen-vizitka');
         }
 
         async function sendToMarketplace() {
-            const task = document.getElementById('gen-task').value;
-            const phone = document.getElementById('gen-phone').value;
-            if(!task || phone.length < 10) return showToast("Заполните форму!");
-            
+            const t = document.getElementById('gen-task').value; const p = document.getElementById('gen-phone').value;
+            if(!t || p.length < 10) return showToast("Заполните форму!");
             showToast("⏳ Публикация...");
-            const message = `📢 *НОВЫЙ ЗАКАЗ: ПАВЛОДАР*\n\n🛠 *Задача:* ${task}\n📞 *Контакт:* ${phone}\n\n_________________________\n🤖 _Заявка через сервис ДЕЛО_`;
-            
+            const msg = `📢 *НОВЫЙ ЗАКАЗ: ПАВЛОДАР*\n\n🛠 *Задача:* ${t}\n📞 *Контакт:* ${p}\n\n🤖 _Сервис ДЕЛО_`;
             try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: CHANNEL_ID, text: message, parse_mode: 'Markdown' })
-                });
-                if(res.ok) {
-                    showToast("🚀 Заказ в канале!");
-                    setTimeout(() => showScreen('screen-welcome'), 2000);
-                } else { showToast("❌ Ошибка Telegram"); }
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHANNEL_ID, text: msg, parse_mode: 'Markdown' }) });
+                if(res.ok) { showToast("🚀 Опубликовано!"); setTimeout(() => showScreen('screen-welcome'), 2000); }
             } catch (e) { showToast("🌐 Ошибка сети"); }
         }
 
-        function sendVisitRequest() {
-            const a = document.getElementById('visit-address').value;
-            const d = document.getElementById('visit-desc').value;
-            if(!a || !d) return showToast("Заполните адрес и задачу!");
-            const msg = `Нужен замер!\n📍 Адрес: ${a}\n🛠 Задача: ${d}`;
-            window.open(`https://wa.me/${masterProfile.phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        function copyMyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => showToast("✅ Ссылка скопирована!"));
-        }
+        function copyMyLink() { navigator.clipboard.writeText(window.location.href).then(() => showToast("✅ Скопировано!")); }
 
         function loadProfile() {
             const data = localStorage.getItem('masterProfile');
@@ -382,16 +342,9 @@
                 document.getElementById('display-name').innerText = masterProfile.name;
                 document.getElementById('display-spec').innerText = masterProfile.spec;
                 document.getElementById('loc-text').innerText = masterProfile.city;
-                if(masterProfile.photo) {
-                    const img = document.getElementById('final-photo');
-                    img.src = masterProfile.photo;
-                    img.classList.remove('hidden');
-                    document.getElementById('final-photo-placeholder').classList.add('hidden');
-                }
+                if(masterProfile.photo) { const img = document.getElementById('final-photo'); img.src = masterProfile.photo; img.classList.remove('hidden'); document.getElementById('final-photo-placeholder').classList.add('hidden'); }
                 showScreen('screen-vizitka');
-            } else {
-                showScreen('screen-welcome');
-            }
+            } else { showScreen('screen-welcome'); }
         }
 
         loadProfile();
